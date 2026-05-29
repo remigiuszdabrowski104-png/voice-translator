@@ -1,0 +1,15 @@
+{
+  "version": "0.8.16.dev0",
+  "integration_state_schema": 1,
+  "installed_integrations": [
+    "roo"
+  ],
+  "integration_settings": {
+    "roo": {
+      "script": "ps",
+      "invoke_separator": "."
+    }
+  },
+  "integration": "roo",
+  "default_integration": "roo"
+}

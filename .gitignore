@@ -15,3 +15,8 @@ Thumbs.db
 # Kilo runtime artifacts
 .kilo/pipeline/
 .kilo/plans/
+
+# SpecKit / Roo agent runtime artifacts (potential credentials)
+.roo/mcp.json
+.roo/*.local.json
+.roo/auth*
