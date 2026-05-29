@@ -1,0 +1,20 @@
+{
+  "$schema": "https://app.kilo.ai/config.json",
+  "mcp": {
+    "sequential-thinking": {
+      "type": "local",
+      "enabled": true,
+      "command": ["cmd", "/c", "npx", "-y", "@modelcontextprotocol/server-sequential-thinking"]
+    },
+    "memory": {
+      "type": "local",
+      "enabled": true,
+      "command": ["cmd", "/c", "npx", "-y", "@modelcontextprotocol/server-memory"]
+    },
+    "filesystem": {
+      "type": "local",
+      "enabled": true,
+      "command": ["cmd", "/c", "npx", "-y", "@modelcontextprotocol/server-filesystem", "C:/Users/48607/dev/kilo-stack"]
+    }
+  }
+}
