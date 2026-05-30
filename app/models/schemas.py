@@ -9,8 +9,6 @@ class TranslateRequest(BaseModel):
     @classmethod
     def validate_text(cls, v: str) -> str:
         stripped = v.strip()
-        if not stripped:
-            raise ValueError("text must not be empty")
         if len(stripped) > 5000:
             raise ValueError("text must not exceed 5000 characters")
         return stripped

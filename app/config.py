@@ -14,7 +14,7 @@ class Settings(BaseSettings):
     DEEPL_FREE_API: bool = True
     VOICE_MODEL_PATH: str = "voices/en_US-lessac-medium.onnx"
     AUDIO_TEMP_DIR: str = "tmp/audio"
-    AUDIO_MAX_AGE_SECONDS: int = 3600
+    AUDIO_MAX_AGE_SECONDS: int = 86400
     MAX_TEXT_LENGTH: int = 5000
 
 
