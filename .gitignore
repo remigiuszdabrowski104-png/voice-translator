@@ -32,3 +32,6 @@ voices/*.json
 .roo/mcp.json
 .roo/*.local.json
 .roo/auth*
+
+# Backup files
+*.bak
