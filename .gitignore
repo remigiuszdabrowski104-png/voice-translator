@@ -12,6 +12,18 @@ Thumbs.db
 *.swp
 .vscode/
 .idea/
+# Environment
+.env
+
+# Temporary files
+tmp/*
+!tmp/**/.gitkeep
+
+# Voice models
+voices/*.onnx
+voices/*.json
+!voices/.gitkeep
+
 # Kilo runtime artifacts
 .kilo/pipeline/
 .kilo/plans/
