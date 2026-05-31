@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tłumacz i ucz się</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="header">
+        <h1>Tłumacz i ucz się angielskiego</h1>
+    </header>
+
+    <main class="container">
+        <section class="translate-section">
+            <textarea
+                id="source-text"
+                class="textarea"
+                placeholder="Wpisz lub wklej tekst po polsku..."
+                maxlength="5000"
+                rows="4"
+            ></textarea>
+
+            <button id="translate-btn" class="btn btn-primary">
+                Tłumacz
+            </button>
+
+            <div id="error-message" class="error-message" hidden></div>
+
+            <div id="result-area" class="result-area" hidden>
+                <div class="result-entry">
+                    <div class="result-pl" id="result-pl"></div>
+                    <div class="result-en" id="result-en"></div>
+                    <button id="result-play-btn" class="btn btn-play" title="Odtwórz wymowę">
+                        <span class="play-icon">&#9654;</span> Play
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <section class="history-section">
+            <h2 class="history-header">Ostatnie tłumaczenia</h2>
+            <ul id="history-list" class="history-list"></ul>
+        </section>
+    </main>
+
+    <script src="app.js"></script>
+</body>
+</html>
