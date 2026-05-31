@@ -14,10 +14,15 @@
     var resultEnEl = document.getElementById("result-en");
     var resultPlayBtn = document.getElementById("result-play-btn");
     var historyListEl = document.getElementById("history-list");
+    var micBtn = document.getElementById("mic-btn");
+    var micStatusEl = document.getElementById("mic-status");
 
     // --- State ---
     var currentAudioId = null;
     var history = [];
+    var mediaRecorder = null;
+    var audioChunks = [];
+    var isRecording = false;
 
     // --- localStorage helpers ---
 
@@ -164,6 +169,137 @@
         }
     }
 
+    // --- Microphone / voice transcription ---
+
+    function pickMimeType() {
+        if (!window.MediaRecorder || !MediaRecorder.isTypeSupported) {
+            return "audio/mp4";
+        }
+        var types = ["audio/webm;codecs=opus", "audio/webm", "audio/mp4", "audio/aac"];
+        for (var i = 0; i < types.length; i++) {
+            if (MediaRecorder.isTypeSupported(types[i])) {
+                return types[i];
+            }
+        }
+        return "";
+    }
+
+    function getExtension(mimeType) {
+        if (mimeType.indexOf("mp4") !== -1 || mimeType.indexOf("aac") !== -1 || mimeType.indexOf("m4a") !== -1) {
+            return "recording.m4a";
+        }
+        return "recording.webm";
+    }
+
+    function updateMicBtn(labelHtml, recordingClass) {
+        micBtn.innerHTML = labelHtml;
+        if (recordingClass) {
+            micBtn.classList.add("recording");
+        } else {
+            micBtn.classList.remove("recording");
+        }
+    }
+
+    function getTranscribeError(status) {
+        switch (status) {
+            case 413:
+                return "Nagranie jest za długie.";
+            case 503:
+                return "Rozpoznawanie mowy nie jest skonfigurowane.";
+            case 502:
+                return "Usługa rozpoznawania mowy jest niedostępna.";
+            case 400:
+                return "Nagranie jest puste.";
+            default:
+                return "Nie udało się rozpoznać mowy. Spróbuj ponownie.";
+        }
+    }
+
+    function startRecording() {
+        isRecording = true;
+        hideError();
+        updateMicBtn("&#127908; Stop", true);
+        micStatusEl.textContent = "Nagrywam...";
+        micStatusEl.hidden = false;
+
+        navigator.mediaDevices.getUserMedia({ audio: true }).then(function (stream) {
+            var mimeType = pickMimeType();
+            var options = mimeType ? { mimeType: mimeType } : {};
+            mediaRecorder = new MediaRecorder(stream, options);
+            audioChunks = [];
+
+            mediaRecorder.ondataavailable = function (e) {
+                if (e.data && e.data.size > 0) {
+                    audioChunks.push(e.data);
+                }
+            };
+
+            mediaRecorder.onstop = function () {
+                var actualType = mimeType || "audio/webm";
+                var blob = new Blob(audioChunks, { type: actualType });
+                var tracks = stream.getTracks();
+                for (var t = 0; t < tracks.length; t++) {
+                    tracks[t].stop();
+                }
+                uploadAudio(blob, mimeType);
+            };
+
+            mediaRecorder.start();
+        }).catch(function (err) {
+            showError("Brak dostępu do mikrofonu.");
+            isRecording = false;
+            updateMicBtn("&#127908; Mów", false);
+            micStatusEl.hidden = true;
+        });
+    }
+
+    function stopRecording() {
+        if (mediaRecorder && isRecording) {
+            mediaRecorder.stop();
+            micBtn.disabled = true;
+            isRecording = false;
+            micStatusEl.textContent = "Rozpoznaję...";
+            updateMicBtn("&#127908; Mów", false);
+        }
+    }
+
+    function uploadAudio(blob, mimeType) {
+        var form = new FormData();
+        var ext = getExtension(blob.type || mimeType);
+        form.append("audio", blob, ext);
+
+        fetch("/api/transcribe", {
+            method: "POST",
+            body: form
+        })
+            .then(function (response) {
+                if (!response.ok) {
+                    return response.text().then(function () {
+                        throw new Error(String(response.status));
+                    });
+                }
+                return response.json();
+            })
+            .then(function (data) {
+                sourceTextEl.value = data.text;
+                doTranslate();
+            })
+            .catch(function (err) {
+                var statusCode = parseInt(err.message, 10);
+                if (isNaN(statusCode)) {
+                    showError("Nie udało się rozpoznać mowy. Spróbuj ponownie.");
+                } else {
+                    showError(getTranscribeError(statusCode));
+                }
+            })
+            .finally(function () {
+                micBtn.disabled = false;
+                micStatusEl.hidden = true;
+                updateMicBtn("&#127908; Mów", false);
+                isRecording = false;
+            });
+    }
+
     // --- Translate action ---
 
     function doTranslate() {
@@ -229,6 +365,19 @@
         hideError();
 
         translateBtn.addEventListener("click", doTranslate);
+
+        // Microphone button – only if supported.
+        if (navigator.mediaDevices && window.MediaRecorder) {
+            micBtn.addEventListener("click", function () {
+                if (isRecording) {
+                    stopRecording();
+                } else {
+                    startRecording();
+                }
+            });
+        } else {
+            micBtn.hidden = true;
+        }
 
         // Allow Enter key (without Shift) to trigger translation.
         sourceTextEl.addEventListener("keydown", function (e) {
