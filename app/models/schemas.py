@@ -19,3 +19,7 @@ class TranslateResponse(BaseModel):
     translated_text: str
     audio_id: str
     target_lang: str
+
+
+class TranscribeResponse(BaseModel):
+    text: str

@@ -12,6 +12,10 @@ class Settings(BaseSettings):
 
     DEEPL_API_KEY: str
     DEEPL_FREE_API: bool = True
+    GROQ_API_KEY: str = ""
+    GROQ_STT_MODEL: str = "whisper-large-v3-turbo"
+    GROQ_STT_LANGUAGE: str = "pl"
+    STT_MAX_UPLOAD_BYTES: int = 10000000
     VOICE_MODEL_PATH: str = "voices/en_US-lessac-medium.onnx"
     AUDIO_TEMP_DIR: str = "tmp/audio"
     AUDIO_MAX_AGE_SECONDS: int = 86400

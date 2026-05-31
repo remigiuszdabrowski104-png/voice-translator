@@ -3,3 +3,5 @@ uvicorn[standard]
 deepl
 python-dotenv
 pydantic-settings
+groq
+python-multipart

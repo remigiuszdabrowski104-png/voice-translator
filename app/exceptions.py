@@ -6,5 +6,9 @@ class TranslationError(AppError):
     """Raised when a translation operation fails."""
 
 
+class STTError(AppError):
+    """Raised when a speech-to-text transcription operation fails."""
+
+
 class TTSError(AppError):
     """Raised when a text-to-speech synthesis operation fails."""
