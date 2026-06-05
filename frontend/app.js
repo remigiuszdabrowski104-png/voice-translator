@@ -1,4 +1,4 @@
-(function () {
+﻿(function () {
     "use strict";
 
     // --- Constants ---
@@ -19,6 +19,7 @@
 
     // --- State ---
     var currentAudioId = null;
+    var currentAudio = null;
     var history = [];
     var mediaRecorder = null;
     var audioChunks = [];
@@ -36,7 +37,7 @@
                 }
             }
         } catch (e) {
-            // Corrupt data – reset.
+            // Corrupt data â€“ reset.
         }
         return [];
     }
@@ -45,7 +46,7 @@
         try {
             localStorage.setItem(STORAGE_KEY, JSON.stringify(history));
         } catch (e) {
-            // Storage full or unavailable – silently ignore.
+            // Storage full or unavailable â€“ silently ignore.
         }
     }
 
@@ -54,8 +55,13 @@
     function playAudio(audioId) {
         if (!audioId) return;
         var url = "/api/audio/" + encodeURIComponent(audioId);
-        var audio = new Audio(url);
-        audio.play().catch(function () {
+        // Zatrzymaj i zresetuj poprzednie odtwarzanie, zanim zagrasz od nowa.
+        if (currentAudio) {
+            currentAudio.pause();
+            currentAudio.currentTime = 0;
+        }
+        currentAudio = new Audio(url);
+        currentAudio.play().catch(function () {
             // Autoplay policy may block; that's acceptable.
         });
     }
@@ -81,7 +87,7 @@
 
             var playBtn = document.createElement("button");
             playBtn.className = "btn btn-play";
-            playBtn.title = "Odtwórz wymowę";
+            playBtn.title = "OdtwĂłrz wymowÄ™";
             playBtn.innerHTML = '<span class="play-icon">&#9654;</span> Play';
 
             (function (audioId) {
@@ -117,7 +123,7 @@
         renderHistory();
     }
 
-    // --- Result display (silent – no auto-play) ---
+    // --- Result display (silent â€“ no auto-play) ---
 
     function showResult(originalText, translatedText, audioId) {
         currentAudioId = audioId;
@@ -151,21 +157,21 @@
     function setLoading(isLoading) {
         if (isLoading) {
             translateBtn.disabled = true;
-            translateBtn.innerHTML = '<span class="spinner"></span>Tłumaczę...';
+            translateBtn.innerHTML = '<span class="spinner"></span>TĹ‚umaczÄ™...';
         } else {
             translateBtn.disabled = false;
-            translateBtn.textContent = "Tłumacz";
+            translateBtn.textContent = "TĹ‚umacz";
         }
     }
 
     function getErrorMessage(status) {
         switch (status) {
             case 400:
-                return "Wpisz tekst przed tłumaczeniem.";
+                return "Wpisz tekst przed tĹ‚umaczeniem.";
             case 422:
-                return "Tekst jest zbyt długi (max 5000 znaków).";
+                return "Tekst jest zbyt dĹ‚ugi (max 5000 znakĂłw).";
             default:
-                return "Wystąpił błąd. Spróbuj ponownie.";
+                return "WystÄ…piĹ‚ bĹ‚Ä…d. SprĂłbuj ponownie.";
         }
     }
 
@@ -203,15 +209,15 @@
     function getTranscribeError(status) {
         switch (status) {
             case 413:
-                return "Nagranie jest za długie.";
+                return "Nagranie jest za dĹ‚ugie.";
             case 503:
                 return "Rozpoznawanie mowy nie jest skonfigurowane.";
             case 502:
-                return "Usługa rozpoznawania mowy jest niedostępna.";
+                return "UsĹ‚uga rozpoznawania mowy jest niedostÄ™pna.";
             case 400:
                 return "Nagranie jest puste.";
             default:
-                return "Nie udało się rozpoznać mowy. Spróbuj ponownie.";
+                return "Nie udaĹ‚o siÄ™ rozpoznaÄ‡ mowy. SprĂłbuj ponownie.";
         }
     }
 
@@ -246,9 +252,9 @@
 
             mediaRecorder.start();
         }).catch(function (err) {
-            showError("Brak dostępu do mikrofonu.");
+            showError("Brak dostÄ™pu do mikrofonu.");
             isRecording = false;
-            updateMicBtn("&#127908; Mów", false);
+            updateMicBtn("&#127908; MĂłw", false);
             micStatusEl.hidden = true;
         });
     }
@@ -258,8 +264,8 @@
             mediaRecorder.stop();
             micBtn.disabled = true;
             isRecording = false;
-            micStatusEl.textContent = "Rozpoznaję...";
-            updateMicBtn("&#127908; Mów", false);
+            micStatusEl.textContent = "RozpoznajÄ™...";
+            updateMicBtn("&#127908; MĂłw", false);
         }
     }
 
@@ -287,7 +293,7 @@
             .catch(function (err) {
                 var statusCode = parseInt(err.message, 10);
                 if (isNaN(statusCode)) {
-                    showError("Nie udało się rozpoznać mowy. Spróbuj ponownie.");
+                    showError("Nie udaĹ‚o siÄ™ rozpoznaÄ‡ mowy. SprĂłbuj ponownie.");
                 } else {
                     showError(getTranscribeError(statusCode));
                 }
@@ -295,7 +301,7 @@
             .finally(function () {
                 micBtn.disabled = false;
                 micStatusEl.hidden = true;
-                updateMicBtn("&#127908; Mów", false);
+                updateMicBtn("&#127908; MĂłw", false);
                 isRecording = false;
             });
     }
@@ -306,7 +312,7 @@
         var text = sourceTextEl.value.trim();
 
         if (!text) {
-            showError("Wpisz tekst przed tłumaczeniem.");
+            showError("Wpisz tekst przed tĹ‚umaczeniem.");
             return;
         }
 
@@ -346,7 +352,7 @@
                 var statusCode = parseInt(err.message, 10);
                 if (isNaN(statusCode)) {
                     // Network error or other.
-                    showError("Wystąpił błąd. Spróbuj ponownie.");
+                    showError("WystÄ…piĹ‚ bĹ‚Ä…d. SprĂłbuj ponownie.");
                 } else {
                     showError(getErrorMessage(statusCode));
                 }
@@ -366,7 +372,7 @@
 
         translateBtn.addEventListener("click", doTranslate);
 
-        // Microphone button – only if supported.
+        // Microphone button â€“ only if supported.
         if (navigator.mediaDevices && window.MediaRecorder) {
             micBtn.addEventListener("click", function () {
                 if (isRecording) {
