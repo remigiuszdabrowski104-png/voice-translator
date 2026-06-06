@@ -1,4 +1,4 @@
-﻿(function () {
+(function () {
     "use strict";
 
     // --- Constants ---
@@ -37,7 +37,7 @@
                 }
             }
         } catch (e) {
-            // Corrupt data â€“ reset.
+            // Corrupt data – reset.
         }
         return [];
     }
@@ -46,7 +46,7 @@
         try {
             localStorage.setItem(STORAGE_KEY, JSON.stringify(history));
         } catch (e) {
-            // Storage full or unavailable â€“ silently ignore.
+            // Storage full or unavailable – silently ignore.
         }
     }
 
@@ -87,7 +87,7 @@
 
             var playBtn = document.createElement("button");
             playBtn.className = "btn btn-play";
-            playBtn.title = "OdtwĂłrz wymowÄ™";
+            playBtn.title = "Odtwórz wymowę";
             playBtn.innerHTML = '<span class="play-icon">&#9654;</span> Play';
 
             (function (audioId) {
@@ -123,7 +123,7 @@
         renderHistory();
     }
 
-    // --- Result display (silent â€“ no auto-play) ---
+    // --- Result display (silent – no auto-play) ---
 
     function showResult(originalText, translatedText, audioId) {
         currentAudioId = audioId;
@@ -157,21 +157,21 @@
     function setLoading(isLoading) {
         if (isLoading) {
             translateBtn.disabled = true;
-            translateBtn.innerHTML = '<span class="spinner"></span>TĹ‚umaczÄ™...';
+            translateBtn.innerHTML = '<span class="spinner"></span>Tłumaczę...';
         } else {
             translateBtn.disabled = false;
-            translateBtn.textContent = "TĹ‚umacz";
+            translateBtn.textContent = "Tłumacz";
         }
     }
 
     function getErrorMessage(status) {
         switch (status) {
             case 400:
-                return "Wpisz tekst przed tĹ‚umaczeniem.";
+                return "Wpisz tekst przed tłumaczeniem.";
             case 422:
-                return "Tekst jest zbyt dĹ‚ugi (max 5000 znakĂłw).";
+                return "Tekst jest zbyt długi (max 5000 znaków).";
             default:
-                return "WystÄ…piĹ‚ bĹ‚Ä…d. SprĂłbuj ponownie.";
+                return "Wystąpił błąd. Spróbuj ponownie.";
         }
     }
 
@@ -209,15 +209,15 @@
     function getTranscribeError(status) {
         switch (status) {
             case 413:
-                return "Nagranie jest za dĹ‚ugie.";
+                return "Nagranie jest za długie.";
             case 503:
                 return "Rozpoznawanie mowy nie jest skonfigurowane.";
             case 502:
-                return "UsĹ‚uga rozpoznawania mowy jest niedostÄ™pna.";
+                return "Usługa rozpoznawania mowy jest niedostępna.";
             case 400:
                 return "Nagranie jest puste.";
             default:
-                return "Nie udaĹ‚o siÄ™ rozpoznaÄ‡ mowy. SprĂłbuj ponownie.";
+                return "Nie udało się rozpoznać mowy. Spróbuj ponownie.";
         }
     }
 
@@ -252,9 +252,9 @@
 
             mediaRecorder.start();
         }).catch(function (err) {
-            showError("Brak dostÄ™pu do mikrofonu.");
+            showError("Brak dostępu do mikrofonu.");
             isRecording = false;
-            updateMicBtn("&#127908; MĂłw", false);
+            updateMicBtn("&#127908; Mów", false);
             micStatusEl.hidden = true;
         });
     }
@@ -264,8 +264,8 @@
             mediaRecorder.stop();
             micBtn.disabled = true;
             isRecording = false;
-            micStatusEl.textContent = "RozpoznajÄ™...";
-            updateMicBtn("&#127908; MĂłw", false);
+            micStatusEl.textContent = "Rozpoznaję...";
+            updateMicBtn("&#127908; Mów", false);
         }
     }
 
@@ -293,7 +293,7 @@
             .catch(function (err) {
                 var statusCode = parseInt(err.message, 10);
                 if (isNaN(statusCode)) {
-                    showError("Nie udaĹ‚o siÄ™ rozpoznaÄ‡ mowy. SprĂłbuj ponownie.");
+                    showError("Nie udało się rozpoznać mowy. Spróbuj ponownie.");
                 } else {
                     showError(getTranscribeError(statusCode));
                 }
@@ -301,7 +301,7 @@
             .finally(function () {
                 micBtn.disabled = false;
                 micStatusEl.hidden = true;
-                updateMicBtn("&#127908; MĂłw", false);
+                updateMicBtn("&#127908; Mów", false);
                 isRecording = false;
             });
     }
@@ -312,7 +312,7 @@
         var text = sourceTextEl.value.trim();
 
         if (!text) {
-            showError("Wpisz tekst przed tĹ‚umaczeniem.");
+            showError("Wpisz tekst przed tłumaczeniem.");
             return;
         }
 
@@ -352,7 +352,7 @@
                 var statusCode = parseInt(err.message, 10);
                 if (isNaN(statusCode)) {
                     // Network error or other.
-                    showError("WystÄ…piĹ‚ bĹ‚Ä…d. SprĂłbuj ponownie.");
+                    showError("Wystąpił błąd. Spróbuj ponownie.");
                 } else {
                     showError(getErrorMessage(statusCode));
                 }
@@ -372,7 +372,7 @@
 
         translateBtn.addEventListener("click", doTranslate);
 
-        // Microphone button â€“ only if supported.
+        // Microphone button – only if supported.
         if (navigator.mediaDevices && window.MediaRecorder) {
             micBtn.addEventListener("click", function () {
                 if (isRecording) {
