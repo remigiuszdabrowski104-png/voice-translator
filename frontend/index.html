@@ -3,12 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tłumacz i ucz się</title>
+    <title>PL → EN</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <header class="header">
-        <h1>Tłumacz i ucz się angielskiego</h1>
+        <div class="header-inner">
+            <span class="header-logo" aria-hidden="true">⇄</span>
+            <span class="header-title">PL <span class="header-arrow">→</span> EN</span>
+        </div>
     </header>
 
     <main class="container">
@@ -16,7 +19,7 @@
             <textarea
                 id="source-text"
                 class="textarea"
-                placeholder="Wpisz lub wklej tekst po polsku..."
+                placeholder="Wpisz lub wklej tekst..."
                 maxlength="5000"
                 rows="4"
             ></textarea>
@@ -45,7 +48,7 @@
         </section>
 
         <section class="history-section">
-            <h2 class="history-header">Ostatnie tłumaczenia</h2>
+            <h2 class="history-header">Ostatnie</h2>
             <ul id="history-list" class="history-list"></ul>
         </section>
     </main>
