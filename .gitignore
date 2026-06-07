@@ -37,3 +37,6 @@ voices/*.json
 *.bak
 
 prompt_*.txt
+
+# Lokalna konfiguracja Kilo - nie publikowac
+.kilo/
